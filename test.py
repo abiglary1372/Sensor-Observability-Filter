@@ -34,12 +34,8 @@ def cover(Vctrs,Bs):
         while i<len(Alpha):
             if Alpha[i] != 0 :
                 Beta.append(Bs[i])
-                print(Beta)
-            print("i is ",i)
             i=i+1
         CvrsL.append(Beta)
-        print(CvrsL)
-        print("l is ",l)
         l=l+1
     CvrU = union(CvrsL)
     l=0
