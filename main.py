@@ -106,7 +106,17 @@ def union(S):
     SU = []
     l=0
     i=0
+    while i<len(S):
+        l=0
+        while l+i+1<len(S):
+            if S[i] == S[l+i+1]:
+                S.remove(S[l+i+1])
+            else:
+                l=l+1
+        i=i+1
     
+    l=0
+    i=0
     while i<len(S):
         l=0
         while l<len(S[i]):

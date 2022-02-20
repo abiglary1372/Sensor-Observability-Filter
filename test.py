@@ -3,13 +3,13 @@ import numpy as np
 
 A = [[1,2,3,4,6],[0,4,5,3,7],[0,0,6,2,8],[0,0,0,3,0],[0,0,0,0,9]]
 G = [[1,0,0,0,0],[4/3,1/3,-2/3,1,0],[2/3,1,0,0,0],[5/8,5/2,1,0,0],[83/30,61/15,8/3,0,1]]
-Sr = [[3,1,0,0,0],[6,0,7,0,0],[6,0,7,0,0],[6,0,0,4,0],[6,0,0,0,5]]
-#Sr = [[1,0,0,0,0]]
+#Sr = [[3,1,0,0,0],[6,0,7,0,0],[6,0,7,0,0],[6,0,0,4,0],[6,0,0,0,5]]
+Sr = [[1,0,0,0,0]]
 #Sr = [[1,1,1,3,1]]
 
 def main():
     st , bsscvrs, R =cover(Sr,G)
-    return st
+    return st , bsscvrs, R
     
 def cover(Vctrs,Bs):
     # this funvtion should check if  the sensor set is covering the basis first then 
@@ -35,8 +35,11 @@ def cover(Vctrs,Bs):
             if Alpha[i] != 0 :
                 Beta.append(Bs[i])
                 print(Beta)
+            print("i is ",i)
             i=i+1
         CvrsL.append(Beta)
+        print(CvrsL)
+        print("l is ",l)
         l=l+1
     CvrU = union(CvrsL)
     l=0
@@ -62,7 +65,17 @@ def union(S):
     SU = []
     l=0
     i=0
+    while i<len(S):
+        l=0
+        while l+i+1<len(S):
+            if S[i] == S[l+i+1]:
+                S.remove(S[l+i+1])
+            else:
+                l=l+1
+        i=i+1
     
+    l=0
+    i=0
     while i<len(S):
         l=0
         while l<len(S[i]):
@@ -82,9 +95,9 @@ def union(S):
         i=i+1
     return SU
 
-U=main()
+st , bsscvrs, R =main()
 
-T=union(U)
+#T=union(U)
 
 
 # union not working 
