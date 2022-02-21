@@ -3,13 +3,13 @@ import numpy as np
 
 A = [[1,2,3,4,6],[0,4,5,3,7],[0,0,6,2,8],[0,0,0,3,0],[0,0,0,0,9]]
 G = [[1,0,0,0,0],[4/3,1/3,-2/3,1,0],[2/3,1,0,0,0],[5/8,5/2,1,0,0],[83/30,61/15,8/3,0,1]]
-#Sr = [[3,1,0,0,0],[6,0,7,0,0],[6,0,7,0,0],[6,0,0,4,0],[6,0,0,0,5]]
-Sr = [[1,0,0,0,0]]
+Sr = [[3,1,0,0,0],[6,5,7,0,0],[6,4,7,0,0],[6,0,0,4,0],[6,3,0,0,5]]
+#Sr = [[1,0,0,0,0]]
 #Sr = [[1,1,1,3,1]]
 
 def main():
-    st , bsscvrs, R =cover(Sr,G)
-    return st , bsscvrs, R
+    R =cover(Sr,G)
+    return  R
     
 def cover(Vctrs,Bs):
     # this funvtion should check if  the sensor set is covering the basis first then 
@@ -37,7 +37,16 @@ def cover(Vctrs,Bs):
             i=i+1
         CvrsL.append(Beta)
         l=l+1
-    CvrU = union(CvrsL)
+        
+    #copying CvrsL :: because list are poointers and point to the value even
+    #if the variable changes
+    CvrsLU =[]
+    i=0
+    while i < len(CvrsL):
+        CvrsLU.append(CvrsL[i])
+        i=i+1
+    ####
+    CvrU = union(CvrsLU)
     l=0
     i=0
     while l < len(Bs):
@@ -53,7 +62,7 @@ def cover(Vctrs,Bs):
     else:
         BsCvrs = False      
         
-    return CvrsL, BsCvrs, CvrU
+    return CvrsL
 
 
 def union(S):
@@ -91,7 +100,7 @@ def union(S):
         i=i+1
     return SU
 
-st , bsscvrs, R =main()
+a =main()
 
 #T=union(U)
 
