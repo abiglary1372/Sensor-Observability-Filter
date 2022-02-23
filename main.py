@@ -44,32 +44,45 @@ def flt(Vctrs,Bs):
     m = 0
     l = 0
     Zeta = 0
-    Cvr, BsCvrs = cover(VctrsL,GammaR)
-    if BsCvrs:
-        while  (GammaR != [] and VctrsL != []):#######
-            l=0
-            while l < len(VctrsL):
-
-                if BM == []:
-                    BetaR = Cvr[l]
-                    Br.append([BetaR,VctrsL[l]])
-                else:
-                    Cmn = conj(union(BM),Cvr[l])
-                    BetaR = remove(Cvr[l],Cmn)
-                    Br.append([BetaR,VctrsL[l]])                   
-                l=l + 1      
-            print(m)
-            Bo = max_beta(Br)
-            So.append(Bo[1])
-            No.append(len(Bo[0]))
-            BM.append(Bo[0])
-            GammaR = remove(GammaR,Bo[0])
-            VctrsL = remove(VctrsL,Bo[1])
-            Zeta = Zeta + len(Bo[0]) 
-            z.append(Zeta)
-            m = m + 1
+    #Cvr, BsCvrs = cover(VctrsL,GammaR)
+    #if BsCvrs:
+    while  (GammaR != [] and VctrsL != []):#######
+        print("this is m",m)
+        l=0
+        print(VctrsL)
+        while l < len(VctrsL):
+            if BM == []:
+                BetaR, BsCvrs = cover([VctrsL[l]],Bs)
+                Br.append([BetaR[0],VctrsL[l]])
+            else:
+                Cvr, BsCvrs = cover([VctrsL[l]],Bs)
+                Cmn = conj(union(BM),Cvr[0])
+                print("this is Cmn\n",Cmn)
+                print("this is Cvr[0]\n",Cvr[0])
+                BetaR = remove(Cvr[0],Cmn)
+                Br.append([BetaR,VctrsL[l]])     
+                
+            l=l + 1      
+        print("this is Br\n",Br)
+        #Bo = max_beta(Br)
+        print('this is Bo\n', max_beta(Br))
+        So.append(max_beta(Br)[1])
+        No.append(len(max_beta(Br)[0]))
+        BM.append(max_beta(Br)[0])
+        GammaR = remove(GammaR,max_beta(Br)[0])
+        print("*******************************")
+        print("GammaR \n",GammaR)
+        VctrsL = remove(VctrsL,[max_beta(Br)[1]])
+        print("*******************************")
+        print("VctrsL \n",VctrsL)
+        Zeta = Zeta + len(max_beta(Br)[0]) 
+        z.append(Zeta) 
+        Bo.clear()
+        Br = []
+        m = m + 1
     return So, GammaR, VctrsL, BM
-
+# remeber in the first iteration a sensor is removed from VctrsL but then reapears in the values in the next operation
+# check why is that happening and if there is a problem with VctrsL
 
 def cover(Vctrs,Bs):
     # this funvtion should check if  the sensor set is covering the basis first then 

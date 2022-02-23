@@ -2,19 +2,15 @@
 import numpy as np
 
 
-A = [[1,2,3,4,6],[0,4,5,3,7],[0,0,6,2,8],[0,0,0,3,0],[0,0,0,0,9]]
-G = [[1,0,0,0,0],[4/3,1/3,-2/3,1,0],[2/3,1,0,0,0],[5/8,5/2,1,0,0],[83/30,61/15,8/3,0,1]]
+def max_beta(Br):
+    maxBta = [[],[]]
+    i=0
+    while i<len(Br):
+        if len(maxBta[0]) < len(Br[i][0]):
+            maxBta = Br[i]
+        i=i+1
+    return maxBta
 
-Garr = np.array(G)
+Br = [   [[1],[]],[[],[]],[[],[1]]         ]
 
-InvBs = np.linalg.inv(np.array(Garr))
-
-# S=[3,1,0,0,0]
-# S=[6,0,7,0,0]
-# S=[6,0,7,0,0]
-S=[1,0,0,0,0]
-#S=[6,0,0,0,5]
-
-Sarr = np.array(S)
-
-Alpha = np.dot(Sarr,InvBs)
+H = max_beta(Br)

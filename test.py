@@ -30,15 +30,14 @@ def cover(Vctrs,Bs):
                 Alpha[i]=0
             i=i+1
 
-        print("this is l,\n", l)
-        print("this is alpha,\n", Alpha)
+        
         
         i=0
         while i<len(Alpha):
             if Alpha[i] != 0 :
                 Beta.append(Bs[i])
             i=i+1
-        print("this is beta,\n", Beta)
+        
         #removeing repeated elements
         i2=0
         l2=0
