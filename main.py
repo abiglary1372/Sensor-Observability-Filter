@@ -7,14 +7,14 @@ import numpy as np
 
 A = [[1,2,3,4,6],[0,4,5,3,7],[0,0,6,2,8],[0,0,0,3,0],[0,0,0,0,9]]
 G = [[1,0,0,0,0],[4/3,1/3,-2/3,1,0],[2/3,1,0,0,0],[5/8,5/2,1,0,0],[83/30,61/15,8/3,0,1]]
-Sr = [[3,1,0,0,0],[0,0,2,1,0],[0,0,0,0,3]] #covers
-#Sr = [[3,1,0,0,0],[6,5,7,0,0],[6,4,7,0,0],[6,0,0,4,0],[6,3,0,0,5]] #covers
+#Sr = [[3,1,0,0,0],[0,0,2,1,0],[0,0,0,0,3]] #covers
+Sr = [[3,1,0,0,0],[6,5,7,0,0],[6,4,7,0,0],[6,0,0,4,0],[6,3,0,0,5]] #covers
 #Sr = [[3,1,0,0,0],[6,0,0,0,0],[6,0,7,0,0],[6,0,0,4,0],[6,3,0,0,0]] # does not cover
 #Sr = [[1,1,1,1,1]]
 
 def main():
-   So, GammaR, VctrsL, BM2 = flt(Sr,G)
-   return So, GammaR, VctrsL, BM2
+   So, No = flt(Sr,G)
+   return So, No
    
     #if obs_check(ObsvS,A): print("observable schedule detected")
     
@@ -46,10 +46,8 @@ def flt(Vctrs,Bs):
     Zeta = 0
     #Cvr, BsCvrs = cover(VctrsL,GammaR)
     #if BsCvrs:
-    while  (GammaR != [] and VctrsL != []):#######
-        print("this is m",m)
+    while  (GammaR != [] and VctrsL != []):
         l=0
-        print(VctrsL)
         while l < len(VctrsL):
             if BM == []:
                 BetaR, BsCvrs = cover([VctrsL[l]],Bs)
@@ -57,30 +55,21 @@ def flt(Vctrs,Bs):
             else:
                 Cvr, BsCvrs = cover([VctrsL[l]],Bs)
                 Cmn = conj(union(BM),Cvr[0])
-                print("this is Cmn\n",Cmn)
-                print("this is Cvr[0]\n",Cvr[0])
                 BetaR = remove(Cvr[0],Cmn)
                 Br.append([BetaR,VctrsL[l]])     
                 
             l=l + 1      
-        print("this is Br\n",Br)
-        #Bo = max_beta(Br)
-        print('this is Bo\n', max_beta(Br))
-        So.append(max_beta(Br)[1])
-        No.append(len(max_beta(Br)[0]))
-        BM.append(max_beta(Br)[0])
-        GammaR = remove(GammaR,max_beta(Br)[0])
-        print("*******************************")
-        print("GammaR \n",GammaR)
-        VctrsL = remove(VctrsL,[max_beta(Br)[1]])
-        print("*******************************")
-        print("VctrsL \n",VctrsL)
-        Zeta = Zeta + len(max_beta(Br)[0]) 
+        Bo = max_beta(Br)
+        So.append(Bo[1])
+        No.append(len(Bo[0]))
+        BM.append(Bo[0])
+        GammaR = remove(GammaR,Bo[0])
+        VctrsL = remove(VctrsL,[Bo[1]])
+        Zeta = Zeta + len(Bo[0]) 
         z.append(Zeta) 
-        Bo.clear()
         Br = []
         m = m + 1
-    return So, GammaR, VctrsL, BM
+    return So, No
 # remeber in the first iteration a sensor is removed from VctrsL but then reapears in the values in the next operation
 # check why is that happening and if there is a problem with VctrsL
 
@@ -304,7 +293,7 @@ def remove(Sa, Sb):
   
 
 if __name__ == "__main__":
-   So, GammaR, VctrsL, BM2 = main()
+   So, No = main()
 
 ## make the functions so that they just accept input and not use global varibles
 ## do not forget to test the unique ness and change of time step with small dimention systems and small time horizons 
