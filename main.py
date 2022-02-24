@@ -2,19 +2,22 @@
 #
 #
 
+
+####### in this example cover funvtions indicates not covering but the final results are gammar empty which means it should cover therefore somewhere there ust have been a mistake 
+
 import pandas as pd
 import numpy as np
 
 A = [[1,2,3,4,6],[0,4,5,3,7],[0,0,6,2,8],[0,0,0,3,0],[0,0,0,0,9]]
-G = [[1,0,0,0,0],[4/3,1/3,-2/3,1,0],[2/3,1,0,0,0],[5/8,5/2,1,0,0],[83/30,61/15,8/3,0,1]]
+G = [[1,0,0,0,0],[4/3,1/3,-2/3,1,0],[2/3,1,0,0,0],[8/5,5/2,1,0,0],[83/30,61/15,8/3,0,1]]
 #Sr = [[3,1,0,0,0],[0,0,2,1,0],[0,0,0,0,3]] #covers
-Sr = [[3,1,0,0,0],[6,5,7,0,0],[6,4,7,0,0],[6,0,0,4,0],[6,3,0,0,5]] #covers
-#Sr = [[3,1,0,0,0],[6,0,0,0,0],[6,0,7,0,0],[6,0,0,4,0],[6,3,0,0,0]] # does not cover
+#Sr = [[3,1,0,0,0],[6,5,7,0,0],[6,4,7,0,0],[6,0,0,4,0],[6,3,0,0,5]] #covers
+Sr = [[3,1,0,0,0],[6,0,0,0,0],[6,0,7,0,0],[6,0,0,4,0],[6,3,0,0,0]] # does not cover
 #Sr = [[1,1,1,1,1]]
 
 def main():
-   So, No = flt(Sr,G)
-   return So, No
+   So, No, BsCvrsM, GammaRM,VctrsLM = flt(Sr,G)
+   return So, No, BsCvrsM, GammaRM,VctrsLM
    
     #if obs_check(ObsvS,A): print("observable schedule detected")
     
@@ -44,32 +47,32 @@ def flt(Vctrs,Bs):
     m = 0
     l = 0
     Zeta = 0
-    #Cvr, BsCvrs = cover(VctrsL,GammaR)
-    #if BsCvrs:
-    while  (GammaR != [] and VctrsL != []):
-        l=0
-        while l < len(VctrsL):
-            if BM == []:
-                BetaR, BsCvrs = cover([VctrsL[l]],Bs)
-                Br.append([BetaR[0],VctrsL[l]])
-            else:
-                Cvr, BsCvrs = cover([VctrsL[l]],Bs)
-                Cmn = conj(union(BM),Cvr[0])
-                BetaR = remove(Cvr[0],Cmn)
-                Br.append([BetaR,VctrsL[l]])     
-                
-            l=l + 1      
-        Bo = max_beta(Br)
-        So.append(Bo[1])
-        No.append(len(Bo[0]))
-        BM.append(Bo[0])
-        GammaR = remove(GammaR,Bo[0])
-        VctrsL = remove(VctrsL,[Bo[1]])
-        Zeta = Zeta + len(Bo[0]) 
-        z.append(Zeta) 
-        Br = []
-        m = m + 1
-    return So, No
+    Cvr, BsCvrsF = cover(VctrsL,GammaR)
+    if BsCvrsF:
+        while  (GammaR != [] and VctrsL != []):
+            l=0
+            while l < len(VctrsL):
+                if BM == []:
+                    BetaR, BsCvrs = cover([VctrsL[l]],Bs)
+                    Br.append([BetaR[0],VctrsL[l]])
+                else:
+                    Cvr, BsCvrs = cover([VctrsL[l]],Bs)
+                    Cmn = conj(union(BM),Cvr[0])
+                    BetaR = remove(Cvr[0],Cmn)
+                    Br.append([BetaR,VctrsL[l]])     
+                    
+                l=l + 1      
+            Bo = max_beta(Br)
+            So.append(Bo[1])
+            No.append(len(Bo[0]))
+            BM.append(Bo[0])
+            GammaR = remove(GammaR,Bo[0])
+            VctrsL = remove(VctrsL,[Bo[1]])
+            Zeta = Zeta + len(Bo[0]) 
+            z.append(Zeta) 
+            Br = []
+            m = m + 1
+    return So, No,BsCvrsF, GammaR,VctrsL
 # remeber in the first iteration a sensor is removed from VctrsL but then reapears in the values in the next operation
 # check why is that happening and if there is a problem with VctrsL
 
@@ -95,7 +98,8 @@ def cover(Vctrs,Bs):
             if abs(Alpha[i]) < 1e-15:
                 Alpha[i]=0
             i=i+1
-
+        print("this is the sensor", Vctrs)
+        print("this is alpha", Alpha)
         
         
         i=0
@@ -293,7 +297,7 @@ def remove(Sa, Sb):
   
 
 if __name__ == "__main__":
-   So, No = main()
+   So, No, BsCvrsO, GammaRO,VctrsLO = main()
 
 ## make the functions so that they just accept input and not use global varibles
 ## do not forget to test the unique ness and change of time step with small dimention systems and small time horizons 
