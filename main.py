@@ -1,6 +1,5 @@
-#there are two problems 
-# one that the value of BsCvrs is False even whe its covering
-# second apparently when not cooverig the values from Vctrs arn not removed and we will have an infinit loop
+# what we want to do now is to designe the sensor set and choosing the coverset for each sensor to do so we eed to do numerical 
+#sims and make suyre there are no numerical errors 
 
 
 from numpy import linalg
@@ -36,16 +35,17 @@ G=[[1,0,0,0,0,0,0,0,0,0],
     [0.2318,0.0608,0.8217,0.3259,0.1245,0.3310,0.0015,0.1891,0.0164,0.0007]]
 
 #Sr = [[3,1,0,0,0],[6,5,7,0,0],[6,4,7,0,0],[6,0,0,4,0],[6,3,0,0,5]] #covers
-Sr = [[3,0,0,0,0,4,0,0,0,0],
-       [0,2,0,0,0,0,0,0,0,0],
-       [0,0,1,0,0,0,3,0,0,0],
-       [0,0,0,4,0,0,0,0,0,0],
-       [0,0,0,0,5,0,0,0,0,0],
-       [0,0,0,0,0,6,0,0,0,0],
-       [0,0,0,0,0,0,7,0,0,0],
-       [0,2,0,0,0,0,0,8,0,0],
-       [0,0,0,0,0,0,0,0,9,0],
-       [0,0,17,0,0,0,0,0,0,0]]
+# Sr = [[1,0,1,0,0,4,0,0,0,0],
+#        [1,0,0,0,0,0,1,0,0,0],
+#        [0,0,1,0,0,0,3,0,0,0],
+#        [0,1,0,4,0,0,0,0,0,0],
+#        [0,0,0,0,5,0,0,2,0,0],
+#        [1,0,0,0,0,6,0,0,0,0],
+#        [0,0,0,0,0,0,7,0,0,0],
+#        [0,2,0,0,0,0,0,8,0,0],
+#        [0,0,0,2,0,0,1,0,0,0],
+#        [1,0,17,0,0,1,0,0,0,2]]
+Sr = [[0.4201,0.0641,1.6619,0.6463,0.1268,0.6995,0,0.3664,0.0167,0]]
 
 def main():
    So, No, BsCvrsM, GammaRM,VctrsLM ,z = flt(Sr,G)
@@ -81,40 +81,46 @@ def flt(Vctrs,Bs):
     m = 0
     l = 0
     Zeta = 0
-    Cvr, BsCvrsF = cover(VctrsL,GammaR)
-    if True:
-        while  (GammaR != [] and VctrsL != []):
-            l=0
-            while l < len(VctrsL):
-                if BM == []:
-                    BetaR, BsCvrs = cover([VctrsL[l]],Bs)
-                    Br.append([BetaR[0],VctrsL[l]])
-                    print("******************************")
-                    print("Br first\n",Br)
-                else:
-                    Cvr, BsCvrs = cover([VctrsL[l]],Bs)
-                    Cmn = conj(union(BM),Cvr[0])
-                    BetaR = remove(Cvr[0],Cmn)
-                    Br.append([BetaR,VctrsL[l]])   
-                    print("******************************")
-                    print("Br\n",Br)
-                    
-                l=l + 1      
-            Bo = max_beta(Br)
-            So.append(Bo[1])
-            No.append(len(Bo[0]))
-            BM.append(Bo[0])
-            GammaR = remove(GammaR,Bo[0])
-            VctrsL = remove(VctrsL,[Bo[1]])
-            print("******************************")
-            print('this is Bo \n',Bo )
-            print("******************************")
-            print('this is VctrsL\n',VctrsL )
-            Zeta = Zeta + len(Bo[0]) 
-            z.append(Zeta) 
-            Br = []
-            Bo = []
-            m = m + 1
+    Cvr = cover(VctrsL,GammaR)
+    
+    while  (GammaR != [] and VctrsL != []):
+        l=0
+        while l < len(VctrsL):
+            if BM == []:
+                BetaR = cover([VctrsL[l]],Bs)
+                Br.append([BetaR[0],VctrsL[l]])
+                print("******************************")
+                print("Br first\n",Br)
+            else:
+                Cvr = cover([VctrsL[l]],Bs)
+                Cmn = conj(union(BM),Cvr[0])
+                BetaR = remove(Cvr[0],Cmn)
+                Br.append([BetaR,VctrsL[l]])   
+                print("******************************")
+                print("Br\n",Br)
+                
+            l=l + 1      
+        Bo = max_beta(Br)
+        So.append(Bo[1])
+        No.append(len(Bo[0]))
+        BM.append(Bo[0])
+        GammaR = remove(GammaR,Bo[0])
+        VctrsL = remove(VctrsL,[Bo[1]])
+        print("******************************")
+        print('this is Bo \n',Bo )
+        print("******************************")
+        print('this is VctrsL\n',VctrsL )
+        Zeta = Zeta + len(Bo[0]) 
+        z.append(Zeta) 
+        Br = []
+        Bo = []
+        m = m + 1
+    
+    if GammaR==[]:
+        BsCvrsF = True
+    if VctrsL==[]:
+        BsCvrsF = False
+        
     return So, No,BsCvrsF, GammaR,VctrsL, z
 
 def cover(Vctrs,Bs):
@@ -139,7 +145,7 @@ def cover(Vctrs,Bs):
             if abs(Alpha[i]) < 1e-10:
                 Alpha[i]=0
             i=i+1
-        #print("this is alpha\n",Alpha)
+        print("this is alpha\n",Alpha)
         i=0
         while i<len(Alpha):
             if Alpha[i] != 0 :
@@ -160,32 +166,8 @@ def cover(Vctrs,Bs):
         ##########
         CvrsL.append(Beta)
         l=l+1
-        
-    #copying CvrsL :: because list are poointers and point to the value even
-    #if the variable changes
-    CvrsLU =[]
-    i=0
-    while i < len(CvrsL):
-        CvrsLU.append(CvrsL[i])
-        i=i+1
-    ####
-    CvrU = union(CvrsLU)
-    l=0
-    i=0
-    while l < len(Bs):
-        i=0
-        while i < len(CvrU):
-            if Bs[l] == CvrU[i]:
-                Chk = Chk+1
-            i=i+1
-        l=l+1
                 
-    if Chk == len(Bs):
-        BsCvrs = True
-    else:
-        BsCvrs = False      
-        
-    return CvrsL, BsCvrs
+    return CvrsL
         
 def max_beta(Br):
     maxBta = [Br[0][0],Br[0][1]]
