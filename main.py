@@ -1,27 +1,59 @@
-# list of variable names
-#
-#
+#there are two problems 
+# one that the value of BsCvrs is False even whe its covering
+# second apparently when not cooverig the values from Vctrs arn not removed and we will have an infinit loop
 
 
-####### in this example cover funvtions indicates not covering but the final results are gammar empty which means it should cover therefore somewhere there ust have been a mistake 
+from numpy import linalg
 from numpy.linalg import matrix_rank
-import pandas as pd
 import numpy as np
-
-A = [[1,2,3,4,6],[0,4,5,3,7],[0,0,6,2,8],[0,0,0,3,0],[0,0,0,0,9]]
-G = [[1,0,0,0,0],[4/3,1/3,-2/3,1,0],[2/3,1,0,0,0],[8/5,5/2,1,0,0],[83/30,61/15,8/3,0,1]]
-#Sr = [[3,1,0,0,0],[0,0,2,1,0],[0,0,0,0,3]] #covers
-Sr = [[3,1,0,0,0],[6,5,7,0,0],[6,4,7,0,0],[6,0,0,4,0],[6,3,0,0,5]] #covers
+#A here is the transpose of the system matrix
 #Sr = [[3,1,0,0,0],[6,0,0,0,0],[6,0,7,0,0],[6,0,0,4,0],[6,3,0,0,0]] # does not cover
 #Sr = [[0,1,0,0,0],[6,0,0,0,0],[0,0,2,0,0],[0,0,3,0,0],[0,0,0,4,0],[0,0,0,0,10],[5,0,0,0,0]] # covers
 #Sr = [[1,1,1,1,1]]
+#Sr = [[3,1,0,0,0],[0,0,2,1,0],[0,0,0,0,3]] #covers
+#Atrps = [[1,2,3,4,6],[0,4,5,3,7],[0,0,6,2,8],[0,0,0,3,0],[0,0,0,0,9]]
+Atrps = [[1,0,0,0,6,0,12,21,22,0]
+          ,[0,4,0,0,7,0,14,0,16,0]
+          ,[0,0,6,2,0,11,0,45,67,89]
+          ,[0,0,0,3,7,10,45,12,0,0]
+          ,[0,0,0,0,9,0,77,0,99,0]
+          ,[0,0,0,0,0,11,0,21,0,0]
+          ,[0,0,0,0,0,0,12,0,0,23]
+          ,[0,0,0,0,0,0,0,21,22,23]
+          ,[0,0,0,0,0,0,0,0,22,23]
+          ,[0,0,0,0,0,0,0,0,0,23]]
+#G = [[1,0,0,0,0],[4/3,1/3,-2/3,1,0],[2/3,1,0,0,0],[8/5,5/2,1,0,0],[83/30,61/15,8/3,0,1]]
+#G = [[1,0,0,0,0],[0.5547,0.8321,0,0,0],[0.5108,0.7982,0.3193,0,0],[0.7303,0.1826,-0.3651,0.5477,0],[0.4868,0.7155,0.4692,0,0.1759]]
+G=[[1,0,0,0,0,0,0,0,0,0],
+    [0,1,0,0,0,0,0,0,0,0],
+    [0,0,1,0,0,0,0,0,0,0],
+    [0,0,-0.5547,0.8321,0,0,0,0,0,0],
+    [0.3201,0.5976,0.3320,0.4980,0.4268,0,0,0,0,0],
+    [0,0,0.8602,0.3982,0,0.3186,0,0,0,0],
+    [0.3243,0.5202,0.1788,0.5364,0.5515,0,0.0215,0,0,0],
+    [0.1834,0,0.8359,0.3203,0,0.3669,0,0.1747,0,0],
+    [0.2100,0.0321,0.8309,0.3231,0.0634,0.3497,0,0.1832,0.0083,0],
+    [0.2318,0.0608,0.8217,0.3259,0.1245,0.3310,0.0015,0.1891,0.0164,0.0007]]
+
+#Sr = [[3,1,0,0,0],[6,5,7,0,0],[6,4,7,0,0],[6,0,0,4,0],[6,3,0,0,5]] #covers
+Sr = [[3,0,0,0,0,4,0,0,0,0],
+       [0,2,0,0,0,0,0,0,0,0],
+       [0,0,1,0,0,0,3,0,0,0],
+       [0,0,0,4,0,0,0,0,0,0],
+       [0,0,0,0,5,0,0,0,0,0],
+       [0,0,0,0,0,6,0,0,0,0],
+       [0,0,0,0,0,0,7,0,0,0],
+       [0,2,0,0,0,0,0,8,0,0],
+       [0,0,0,0,0,0,0,0,9,0],
+       [0,0,17,0,0,0,0,0,0,0]]
 
 def main():
    So, No, BsCvrsM, GammaRM,VctrsLM ,z = flt(Sr,G)
-   rnk = obs_check(So,No,A,G,z)
+   rnk = obs_check(So,No,Atrps,G,z)
+   if rnk == len(Atrps):
+       print("observability matrix is full rank and the schedule exists")
    return So, No, BsCvrsM, GammaRM,VctrsLM ,z ,rnk
    
-    #if obs_check(ObsvS,A): print("observable schedule detected")
     
 def flt(Vctrs,Bs):
     # main filtering algorithm
@@ -50,18 +82,22 @@ def flt(Vctrs,Bs):
     l = 0
     Zeta = 0
     Cvr, BsCvrsF = cover(VctrsL,GammaR)
-    if BsCvrsF:
+    if True:
         while  (GammaR != [] and VctrsL != []):
             l=0
             while l < len(VctrsL):
                 if BM == []:
                     BetaR, BsCvrs = cover([VctrsL[l]],Bs)
                     Br.append([BetaR[0],VctrsL[l]])
+                    print("******************************")
+                    print("Br first\n",Br)
                 else:
                     Cvr, BsCvrs = cover([VctrsL[l]],Bs)
                     Cmn = conj(union(BM),Cvr[0])
                     BetaR = remove(Cvr[0],Cmn)
-                    Br.append([BetaR,VctrsL[l]])     
+                    Br.append([BetaR,VctrsL[l]])   
+                    print("******************************")
+                    print("Br\n",Br)
                     
                 l=l + 1      
             Bo = max_beta(Br)
@@ -70,13 +106,16 @@ def flt(Vctrs,Bs):
             BM.append(Bo[0])
             GammaR = remove(GammaR,Bo[0])
             VctrsL = remove(VctrsL,[Bo[1]])
+            print("******************************")
+            print('this is Bo \n',Bo )
+            print("******************************")
+            print('this is VctrsL\n',VctrsL )
             Zeta = Zeta + len(Bo[0]) 
             z.append(Zeta) 
             Br = []
+            Bo = []
             m = m + 1
     return So, No,BsCvrsF, GammaR,VctrsL, z
-# remeber in the first iteration a sensor is removed from VctrsL but then reapears in the values in the next operation
-# check why is that happening and if there is a problem with VctrsL
 
 def cover(Vctrs,Bs):
     # this funvtion should check if  the sensor set is covering the basis first then 
@@ -97,13 +136,10 @@ def cover(Vctrs,Bs):
         i=0
         while i<len(Alpha):
             #compensating numerical errors
-            if abs(Alpha[i]) < 1e-15:
+            if abs(Alpha[i]) < 1e-10:
                 Alpha[i]=0
             i=i+1
-        # print("this is the sensor", Vctrs)
-        # print("this is alpha", Alpha)
-        
-        
+        #print("this is alpha\n",Alpha)
         i=0
         while i<len(Alpha):
             if Alpha[i] != 0 :
@@ -152,7 +188,7 @@ def cover(Vctrs,Bs):
     return CvrsL, BsCvrs
         
 def max_beta(Br):
-    maxBta = [[],[]]
+    maxBta = [Br[0][0],Br[0][1]]
     i=0
     while i<len(Br):
         if len(maxBta[0]) < len(Br[i][0]):
@@ -231,8 +267,7 @@ def conj(Sa,Sb):
     return Sab
 
 def remove(Sa, Sb): 
-    ###**tested**###
-    ################
+
     SaCpy = []
     SbCpy = []
     
@@ -286,7 +321,6 @@ def remove(Sa, Sb):
         i=i+1
     return SaCpy
     
-
 def obs_check(S,No,A,Bs,z):
     
     l=0
@@ -305,14 +339,12 @@ def obs_check(S,No,A,Bs,z):
     return rnk
        
         
-        
     
     
     # at the end after filtering the sensor set this function will check the 
     # observability of the schedule using filtered set and returns a true or false value 
     # this function should be able to check any other random schedule as well and 
-    # in general it should just check schedules and return true or flase
-    
+    # in general it should just check schedules and return true or flas
 # def random_sch():
     # this function generate random schedules of requested time horizons using the 
     # sensor set or the result of the flt algorithm
@@ -321,9 +353,12 @@ def obs_check(S,No,A,Bs,z):
 if __name__ == "__main__":
    So, No, BsCvrsO, GammaRO,VctrsLO ,z ,rnk = main()
 
-## make the functions so that they just accept input and not use global varibles
-## do not forget to test the unique ness and change of time step with small dimention systems and small time horizons 
-## and discuss the numerical results 
+# numerical results indicate that if sensor set dosnt cover the the basis there exist no observale schedule 
+# numerical results also indicate that there are could multiplel possible sub sets for the observable schedule 
+# numerical results so far suggest that it is possible to change the time steps 
+# numerical results so far suggest that no matther how the sensors of the subset are used in the schedule the observabiliy is maintatined 
+
+
 
 
 
