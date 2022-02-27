@@ -1,7 +1,7 @@
 # what we want to do now is to designe the sensor set and choosing the coverset for each sensor to do so we eed to do numerical 
 #sims and make suyre there are no numerical errors 
 
-
+import math
 from numpy import linalg
 from numpy.linalg import matrix_rank
 import numpy as np
@@ -181,6 +181,7 @@ def cover(Vctrs,Bs):
             if abs(Alpha[i]) < 1e-10:
                 Alpha[i]=0
             i=i+1
+            
         print("this is alpha\n",Alpha)
         
         
