@@ -26,6 +26,10 @@ import numpy as np
 #G = [[1,0,0,0,0],[4/3,1/3,-2/3,1,0],[2/3,1,0,0,0],[8/5,5/2,1,0,0],[83/30,61/15,8/3,0,1]]
 #G = [[1,0,0,0,0],[0.5547,0.8321,0,0,0],[0.5108,0.7982,0.3193,0,0],[0.7303,0.1826,-0.3651,0.5477,0],[0.4868,0.7155,0.4692,0,0.1759]]
 
+#------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
+##example 1 (positive eigen values)
+###########
 Atrps = [[1,0,0,0,6,0,12,21,22,0]
           ,[0,4,0,0,7,0,14,0,16,0]
           ,[0,0,6,2,0,11,0,45,67,89]
@@ -36,7 +40,8 @@ Atrps = [[1,0,0,0,6,0,12,21,22,0]
           ,[0,0,0,0,0,0,0,21,22,23]
           ,[0,0,0,0,0,0,0,0,22,23]
           ,[0,0,0,0,0,0,0,0,0,23]]
-# /ve
+
+# the basis made of eigen vectors
 G=[[1,0,0,0,0,0,0,0,0,0],
     [0,1,0,0,0,0,0,0,0,0],
     [0,0,1,0,0,0,0,0,0,0],
@@ -49,7 +54,32 @@ G=[[1,0,0,0,0,0,0,0,0,0],
     [0.2318,0.0608,0.8217,0.3259,0.1245,0.3310,0.0015,0.1891,0.0164,0.0007]]
 
 # desining the sensor set coverage 
-Alpha = [[2,3,4,0,0,0,0,0,0,0],[0,0,0,5,6,3,7,0,0,0],[0,0,0,0,0,0,0,1,2,7]]
+Alpha = [[2,3,4,0,0,0,0,0,0,0],
+          [0,0,0,5,6,3,7,0,0,0],
+          [0,0,0,0,0,0,0,1,2,7],
+          [1,0,0,0,0,0,0,0,0,0],
+          [0,0,0,0,0,0,0,0,0,1],
+          [0,0,0,0,0,2,0,0,0,0]]
+#------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
+##example 2 (one negative eigen value)
+###########
+# Atrps=[[1,2,4,5,7],
+#        [0,11,4,8,7],
+#        [0,0,-8,0,3],
+#        [0,0,0,7,0],
+#        [0,0,0,0,6]]
+# G = [[1,0,0,0,0],
+#      [-68/171,-4/19,1,0,0],
+#      [33/35,-11/7,3/14,0,1],
+#      [1/6,-2,0,1,0],
+#      [1/5,1,0,0,0]]
+
+# Alpha =[[1,2,0,0,0],
+#         [0,0,4,8,0],
+#         [0,0,0,0,3],
+#         [0,0,0,7,0],
+#         [0,0,0,0,6]]
 
 def main():
     
@@ -59,7 +89,7 @@ def main():
    rnk = obs_check(So,No,Atrps,G,z)
    if rnk == len(Atrps):
        print("observability matrix is full rank and the schedule exists")
-   return So, No, BsCvrsM, GammaRM,VctrsLM ,z ,rnk
+   return So, Sr, No, BsCvrsM, GammaRM,VctrsLM ,z ,rnk
    
     
 def flt(Vctrs,Bs):
@@ -143,21 +173,27 @@ def cover(Vctrs,Bs):
         Beta = []
         Alpha = np.dot(np.array(Vctrs[l]),InvBs)
         Alpha = Alpha.tolist()
-        
+
+#compensating numerical errors
         i=0
         while i<len(Alpha):
-            #compensating numerical errors
+
             if abs(Alpha[i]) < 1e-10:
                 Alpha[i]=0
             i=i+1
-        #print("this is alpha\n",Alpha)
+        print("this is alpha\n",Alpha)
+        
+        
+        
         i=0
         while i<len(Alpha):
             if Alpha[i] != 0 :
                 Beta.append(Bs[i])
             i=i+1
         
-        #removeing repeated elements
+        
+        
+#removeing repeated elements
         i2=0
         l2=0
         while i2<len(Beta):
@@ -168,7 +204,9 @@ def cover(Vctrs,Bs):
                 else:
                     l2=l2+1
             i2=i2+1
-        ##########
+##########
+        
+        
         CvrsL.append(Beta)
         l=l+1
                 
@@ -340,18 +378,20 @@ def snsr_fndr(G,Alpha):
     return Sv
         
     
-    
-    # at the end after filtering the sensor set this function will check the 
-    # observability of the schedule using filtered set and returns a true or false value 
-    # this function should be able to check any other random schedule as well and 
-    # in general it should just check schedules and return true or flas
-# def random_sch():
-    # this function generate random schedules of requested time horizons using the 
-    # sensor set or the result of the flt algorithm
-  
-
+def schdl_rnk_chk(sgm,A,So):
+    l=0
+    O=[]
+    while l<len(sgm):
+        o= np.dot(np.array( So[sgm[l]] ), np.linalg.matrix_power(np.transpose( np.array(A)), l))
+        o = o.tolist()
+        O.append(o)
+        l=l+1
+        rnk = matrix_rank(np.array(O))
+        
+    return rnk
+        
 if __name__ == "__main__":
-   So, No, BsCvrsO, GammaRO,VctrsLO ,z ,rnk = main()
+   So, Sr, No, BsCvrsO, GammaRO,VctrsLO ,z ,rnk = main()
 
 # numerical results indicate that if sensor set dosnt cover the the basis there exist no observale schedule 
 # numerical results also indicate that there are could multiplel possible sub sets for the observable schedule 
