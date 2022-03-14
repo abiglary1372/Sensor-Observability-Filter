@@ -1,68 +1,44 @@
-# what we want to do now is to designe the sensor set and choosing the coverset for each sensor to do so we eed to do numerical 
-#sims and make suyre there are no numerical errors 
+###############################################################################
+#######################OBSERVABILITY OF A SENSOR SCHDULE#######################
+###############################################################################
+"""
+TABLE OF PARAMETERS:
+FUNCTION main():            A function where the correct sequence of function  
+                            execution is managed.
+1.FUNCTION flt():           Almost exactly the execution of the psudocode of 
+                            the thesis document
+2.FUNCTION cover():         finds the cover set of vector with respect to a 
+                            basis
+3.FUNCTION max_beta():      does exactly what function MAX() does in the psudo-
+                            code of the thesis document, finding the paired 
+                            element with fisrt elemnt of a pair that has the 
+                            largest cardinality among other paired elements
+4.FUNCTION union():         in this program at some point we will have a list of
+                            sub cover sets (BM) in the form of lists where each
+                            list contains basis elements in the form of lists
+                            thus we have set of basis elements sets. this 
+                            function recieves this set of sets and the takes 
+                            union of the sets inside and outputs a list of 
+                            basis elements(vectors)
+5.FUNCTION conj():          
+6.FUNCTION remove():
+7.FUNCTION obs_check():
+8.FUNCTION snsr_fndr():
+9.FUNCTION schdl_rnk_chk:
+    
+"""
+
+
+
 
 import math
 from numpy import linalg
 from numpy.linalg import matrix_rank
 import numpy as np
-#A here is the transpose of the system matrix
-#Sr = [[3,1,0,0,0],[6,0,0,0,0],[6,0,7,0,0],[6,0,0,4,0],[6,3,0,0,0]] # does not cover
-#Sr = [[0,1,0,0,0],[6,0,0,0,0],[0,0,2,0,0],[0,0,3,0,0],[0,0,0,4,0],[0,0,0,0,10],[5,0,0,0,0]] # covers
-#Sr = [[1,1,1,1,1]]
-#Sr = [[3,1,0,0,0],[0,0,2,1,0],[0,0,0,0,3]] #covers
-#Atrps = [[1,2,3,4,6],[0,4,5,3,7],[0,0,6,2,8],[0,0,0,3,0],[0,0,0,0,9]]
-#Sr = [[3,1,0,0,0],[6,5,7,0,0],[6,4,7,0,0],[6,0,0,4,0],[6,3,0,0,5]] #covers
-# Sr = [[1,0,1,0,0,4,0,0,0,0],
-#        [1,0,0,0,0,0,1,0,0,0],
-#        [0,0,1,0,0,0,3,0,0,0],
-#        [0,1,0,4,0,0,0,0,0,0],
-#        [0,0,0,0,5,0,0,2,0,0],
-#        [1,0,0,0,0,6,0,0,0,0],
-#        [0,0,0,0,0,0,7,0,0,0],
-#        [0,2,0,0,0,0,0,8,0,0],
-#        [0,0,0,2,0,0,1,0,0,0],
-#        [1,0,17,0,0,1,0,0,0,2]]
-# Sr = [[0.4201,0.0641,1.6619,0.6463,0.1268,0.6995,0,0.3664,0.0167,0]]
-#G = [[1,0,0,0,0],[4/3,1/3,-2/3,1,0],[2/3,1,0,0,0],[8/5,5/2,1,0,0],[83/30,61/15,8/3,0,1]]
-#G = [[1,0,0,0,0],[0.5547,0.8321,0,0,0],[0.5108,0.7982,0.3193,0,0],[0.7303,0.1826,-0.3651,0.5477,0],[0.4868,0.7155,0.4692,0,0.1759]]
 
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
-##example 1 (positive eigen values)
-###########
-# Atrps = [[1,0,0,0,6,0,12,21,22,0]
-#           ,[0,4,0,0,7,0,14,0,16,0]
-#           ,[0,0,6,2,0,11,0,45,67,89]
-#           ,[0,0,0,3,7,10,45,12,0,0]
-#           ,[0,0,0,0,9,0,77,0,99,0]
-#           ,[0,0,0,0,0,11,0,21,0,0]
-#           ,[0,0,0,0,0,0,12,0,0,23]
-#           ,[0,0,0,0,0,0,0,21,22,23]
-#           ,[0,0,0,0,0,0,0,0,22,23]
-#           ,[0,0,0,0,0,0,0,0,0,23]]
-
-# # the basis made of eigen vectors
-# G=[[1,0,0,0,0,0,0,0,0,0],
-#     [0,1,0,0,0,0,0,0,0,0],
-#     [0,0,1,0,0,0,0,0,0,0],
-#     [0,0,-0.5547,0.8321,0,0,0,0,0,0],
-#     [0.3201,0.5976,0.3320,0.4980,0.4268,0,0,0,0,0],
-#     [0,0,0.8602,0.3982,0,0.3186,0,0,0,0],
-#     [0.3243,0.5202,0.1788,0.5364,0.5515,0,0.0215,0,0,0],
-#     [0.1834,0,0.8359,0.3203,0,0.3669,0,0.1747,0,0],
-#     [0.2100,0.0321,0.8309,0.3231,0.0634,0.3497,0,0.1832,0.0083,0],
-#     [0.2318,0.0608,0.8217,0.3259,0.1245,0.3310,0.0015,0.1891,0.0164,0.0007]]
-
-# # desining the sensor set coverage 
-# Alpha = [[2,3,4,0,0,0,0,0,0,0],
-#           [0,0,0,5,6,3,7,0,0,0],
-#           [0,0,0,0,0,0,0,1,2,7],
-#           [1,0,0,0,0,0,0,0,0,0],
-#           [0,0,0,0,0,0,0,0,0,1],
-#           [0,0,0,0,0,2,0,0,0,0]]
-#------------------------------------------------------------------------------
-#------------------------------------------------------------------------------
-##example 2 (one negative eigen value)
+##example 3.3.1 
 ###########
 Atrps=[[1,2,4,5,7],
         [0,11,4,8,7],
@@ -91,6 +67,9 @@ Alpha =[[0,2,0,0,0],
         [0,0,0,7,0],
         [0,0,0,0,6],
         [0,3,0,0,0]]
+
+##-----------------------------------------------------------------------------
+##-----------------------------------------------------------------------------
 
 def main():
     
@@ -240,7 +219,7 @@ def union(S):
     
     SCpy = []
     
-    #copying
+    #copying the list values to a new variables
     i=0
     while i < len(S):
         SCpy.append(S[i])
@@ -250,6 +229,7 @@ def union(S):
     SU = []
     l=0
     i=0
+    # removing similar set elements
     while i<len(SCpy):
         l=0
         while l+i+1<len(SCpy):
@@ -269,6 +249,8 @@ def union(S):
         i=i+1
     i=0
     l=0
+    
+    #removing similar elements 
     while i<len(SU):
         l=0
         while l+i+1<len(SU):
