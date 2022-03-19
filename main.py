@@ -3,16 +3,21 @@
 ###############################################################################
 """
 TABLE OF PARAMETERS:
+    
 FUNCTION main():            A function where the correct sequence of function  
                             execution is managed.
+
 1.FUNCTION flt():           Almost exactly the execution of the psudocode of 
                             the thesis document
+
 2.FUNCTION cover():         finds the cover set of vector with respect to a 
                             basis
+
 3.FUNCTION max_beta():      does exactly what function MAX() does in the psudo-
                             code of the thesis document, finding the paired 
                             element with fisrt elemnt of a pair that has the 
                             largest cardinality among other paired elements
+
 4.FUNCTION union():         in this program at some point we will have a list of
                             sub cover sets (BM) in the form of lists where each
                             list contains basis elements in the form of lists
@@ -20,16 +25,27 @@ FUNCTION main():            A function where the correct sequence of function
                             function recieves this set of sets and the takes 
                             union of the sets inside and outputs a list of 
                             basis elements(vectors)
-5.FUNCTION conj():          
-6.FUNCTION remove():
-7.FUNCTION obs_check():
-8.FUNCTION snsr_fndr():
-9.FUNCTION schdl_rnk_chk:
-    
+
+5.FUNCTION conj():          This function finds the conjunction of two sets
+
+6.FUNCTION remove():        This function accepts two Lists and removes the common 
+                            elements of two lists and from the first one
+
+7.FUNCTION obs_check():     After finding sensor set So this function builds 
+                            the proposed schedule of the thesis and builds and 
+                            claculates the  rank of the observability matrix
+                           
+
+8.FUNCTION snsr_fndr():     This Function is used to create a desired initial 
+                            sensor set with a specific basis coverage  
 """
 
+"""
+TABLE OF VARIABLES:
+    
+    
 
-
+"""
 
 import math
 from numpy import linalg
@@ -40,16 +56,16 @@ import numpy as np
 #------------------------------------------------------------------------------
 ##example 3.3.1 
 ###########
-Atrps=[[1,2,4,5,7],
-        [0,11,4,8,7],
-        [0,0,-8,0,3],
-        [0,0,0,7,0],
-        [0,0,0,0,6]]
-G = [[1,0,0,0,0],
-      [-68/171,-4/19,1,0,0],
-      [33/35,-11/7,3/14,0,1],
-      [1/6,-2,0,1,0],
-      [1/5,1,0,0,0]]
+# Atrps=[[1,2,4,5,7],
+#         [0,11,4,8,7],
+#         [0,0,-8,0,3],
+#         [0,0,0,7,0],
+#         [0,0,0,0,6]]
+# G = [[1,0,0,0,0],
+#       [-68/171,-4/19,1,0,0],
+#       [33/35,-11/7,3/14,0,1],
+#       [1/6,-2,0,1,0],
+#       [1/5,1,0,0,0]]
 
 # covering alpha
 # Alpha =[[1,2,3,0,0],
@@ -61,12 +77,30 @@ G = [[1,0,0,0,0],
 
 #not covering alpha
 
-Alpha =[[0,2,0,0,0],
-        [0,0,0,8,0],
-        [0,0,0,3,3],
-        [0,0,0,7,0],
-        [0,0,0,0,6],
-        [0,3,0,0,0]]
+# Alpha =[[0,2,0,0,0],
+#         [0,0,0,8,0],
+#         [0,0,0,3,3],
+#         [0,0,0,7,0],
+#         [0,0,0,0,6],
+#         [0,3,0,0,0]]
+
+## example 3.2
+
+Atrps=[[2,3,4],
+       [0,8,9],
+       [0,0,5]]
+
+G = [[1,0,0],
+     [-5/3,-3,1],
+     [0.5,1,0]]
+#not covering
+# Alpha =[[0,2,0],
+#         [1,0,0],
+#         [2,4,0]]
+#covering
+Alpha =[[0,2,0],
+        [1,0,0],
+        [0,4,6]]
 
 ##-----------------------------------------------------------------------------
 ##-----------------------------------------------------------------------------
