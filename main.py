@@ -56,24 +56,24 @@ import numpy as np
 #------------------------------------------------------------------------------
 ##example 3.3.1 
 ###########
-# Atrps=[[1,2,4,5,7],
-#         [0,11,4,8,7],
-#         [0,0,-8,0,3],
-#         [0,0,0,7,0],
-#         [0,0,0,0,6]]
-# G = [[1,0,0,0,0],
-#       [-68/171,-4/19,1,0,0],
-#       [33/35,-11/7,3/14,0,1],
-#       [1/6,-2,0,1,0],
-#       [1/5,1,0,0,0]]
+Atrps=[[1,2,4,5,7],
+        [0,11,4,8,7],
+        [0,0,-8,0,3],
+        [0,0,0,7,0],
+        [0,0,0,0,6]]
+G = [[1,0,0,0,0],
+      [-68/171,-4/19,1,0,0],
+      [33/35,-11/7,3/14,0,1],
+      [1/6,-2,0,1,0],
+      [1/5,1,0,0,0]]
 
-# covering alpha
-# Alpha =[[1,2,3,0,0],
-#         [0,0,4,8,0],
-#         [0,0,0,0,3],
-#         [0,0,0,7,0],
-#         [0,0,0,0,6],
-#         [0,3,4,0,0]]
+#covering alpha
+Alpha =[[1,2,3,0,0],
+        [0,0,4,8,0],
+        [0,0,0,0,3],
+        [0,0,0,7,0],
+        [0,0,0,0,6],
+        [0,3,4,0,0]]
 
 #not covering alpha
 
@@ -86,21 +86,21 @@ import numpy as np
 
 ## example 3.2
 
-Atrps=[[2,3,4],
-       [0,8,9],
-       [0,0,5]]
+# Atrps=[[2,3,4],
+#        [0,8,9],
+#        [0,0,5]]
 
-G = [[1,0,0],
-     [-5/3,-3,1],
-     [0.5,1,0]]
+# G = [[1,0,0],
+#      [-5/3,-3,1],
+#      [0.5,1,0]]
 #not covering
 # Alpha =[[0,2,0],
 #         [1,0,0],
 #         [2,4,0]]
 #covering
-Alpha =[[0,2,0],
-        [1,0,0],
-        [0,4,6]]
+# Alpha =[[0,2,0],
+#         [1,0,0],
+#         [0,4,6]]
 
 ##-----------------------------------------------------------------------------
 ##-----------------------------------------------------------------------------
@@ -108,11 +108,13 @@ Alpha =[[0,2,0],
 def main():
     
    Sr = snsr_fndr(G,Alpha)
-   print(Sr)
    So, No, BsCvrsM, GammaRM,VctrsLM ,z = flt(Sr,G)
    rnk = obs_check(So,No,Atrps,G,z)
    if rnk == len(Atrps):
-       print("observability matrix is full rank and the schedule exists")
+       print("********************************************************************")
+       print("######  Observability matrix is full rank and the observable schedule exists!!  #####")
+       print("********************************************************************")
+       
    return So, Sr, No, BsCvrsM, GammaRM,VctrsLM ,z ,rnk
    
     
@@ -145,32 +147,25 @@ def flt(Vctrs,Bs):
     Cvr = cover(VctrsL,GammaR)
     
     while  (GammaR != [] and VctrsL != []):
+        
         l=0
         while l < len(VctrsL):
             if BM == []:
                 BetaR = cover([VctrsL[l]],Bs)
                 Br.append([BetaR[0],VctrsL[l]])
-                # print("******************************")
-                # print("Br first\n",Br)
             else:
                 Cvr = cover([VctrsL[l]],Bs)
                 Cmn = conj(union(BM),Cvr[0])
                 BetaR = remove(Cvr[0],Cmn)
                 Br.append([BetaR,VctrsL[l]])   
-                # print("******************************")
-                # print("Br\n",Br)
-                
             l=l + 1      
+            
         Bo = max_beta(Br)
         So.append(Bo[1])
         No.append(len(Bo[0]))
         BM.append(Bo[0])
         GammaR = remove(GammaR,Bo[0])
         VctrsL = remove(VctrsL,[Bo[1]])
-        # print("******************************")
-        # print('this is Bo \n',Bo )
-        # print("******************************")
-        # print('this is VctrsL\n',VctrsL )
         Zeta = Zeta + len(Bo[0]) 
         z.append(Zeta) 
         Br = []
@@ -205,10 +200,6 @@ def cover(Vctrs,Bs):
             if abs(Alpha[i]) < 1e-10:
                 Alpha[i]=0
             i=i+1
-            
-        #print("this is alpha\n",Alpha)
-        
-        
         
         i=0
         while i<len(Alpha):
